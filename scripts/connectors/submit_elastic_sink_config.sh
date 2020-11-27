@@ -10,7 +10,7 @@ DATA=$( cat << EOF
     "topics": "WIKIPEDIABOT",
     "topic.index.map": "WIKIPEDIABOT:wikipediabot",
     "connection.url": "http://elasticsearch:9200",
-    "type.name": "wikichange",
+    "type.name": "_doc",
     "key.ignore": true,
     "key.converter.schema.registry.url": "https://schemaregistry:8085",
     "value.converter": "io.confluent.connect.avro.AvroConverter",
@@ -21,7 +21,6 @@ DATA=$( cat << EOF
     "value.converter.basic.auth.user.info": "connectorSA:connectorSA",
     "consumer.override.sasl.jaas.config": "org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required username=\"connectorSA\" password=\"connectorSA\" metadataServerUrls=\"https://kafka1:8091,https://kafka2:8092\";",
     "schema.ignore": true
-
   }
 }
 EOF

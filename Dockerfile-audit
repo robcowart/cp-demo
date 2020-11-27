@@ -1,0 +1,7 @@
+FROM docker.elastic.co/logstash/logstash-oss:7.10.0
+
+WORKDIR /usr/share/logstash/config
+COPY --chown=logstash:logstash ./scripts/dashboard/logstash.yml ./
+COPY --chown=logstash:logstash ./scripts/dashboard/audit.logstash.conf ./
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]

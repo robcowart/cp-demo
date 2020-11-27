@@ -1,0 +1,2 @@
+path.config: "/usr/share/logstash/config/audit.logstash.conf"
+pipeline.workers: 1

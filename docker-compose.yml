@@ -562,22 +562,22 @@ services:
                   -XX:MaxGCPauseMillis=10000 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent
                   -XX:MaxInlineLevel=15 -Djava.awt.headless=true
 
-
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.0
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.0
     container_name: elasticsearch
     #restart: always
     ports:
-      - 9200:9200
-      - 9300:9300
+      # HTTP/REST
+      - 9200:9200/tcp
+      # Transport
+      - 9300:9300/tcp
     environment:
-      xpack.security.enabled: 'false'
-      discovery.type: "single-node"
-      ES_JAVA_OPTS: "-Xms750m -Xmx750m"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
       cluster.name: "elasticsearch-cp-demo"
+      discovery.type: "single-node"
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:5.5.2
+    image: docker.elastic.co/kibana/kibana-oss:7.10.0
     container_name: kibana
     restart: always
     depends_on:
@@ -585,7 +585,21 @@ services:
     ports:
       - 5601:5601
     environment:
-      xpack.security.enabled: 'false'
+      NEWSFEED_ENABLED: 'false'
+      TELEMETRY_OPTIN: 'false'
+      TELEMETRY_ENABLED: 'false'
+
+      SERVER_MAXPAYLOADBYTES: 4194304
+
+      KIBANA_AUTOCOMPLETETIMEOUT: 3000
+      KIBANA_AUTOCOMPLETETERMINATEAFTER: 2500000
+
+  audit-log-consumer:
+    image: localbuild/audit-log-consumer:latest
+    container_name: audit-log-consumer
+    restart: always
+    depends_on:
+      - elasticsearch
 
   control-center:
     image: ${REPOSITORY}/cp-enterprise-control-center:${CONFLUENT_DOCKER_TAG}

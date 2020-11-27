@@ -73,6 +73,11 @@ if [[ "$CLEAN" == "true" ]] ; then
   build_connect_image || exit 1
 fi
 
+# Build audit log consumer image with required jars
+if [[ "$CLEAN" == "true" ]] ; then
+  build_audit_log_consumer_image || exit 1
+fi
+
 # Bring up more containers
 docker-compose up -d schemaregistry connect control-center
 
@@ -153,7 +158,13 @@ retry $MAX_WAIT host_check_elasticsearch_ready || exit 1
 echo -e "\nProvide data mapping to Elasticsearch:"
 ${DIR}/dashboard/set_elasticsearch_mapping_bot.sh
 ${DIR}/dashboard/set_elasticsearch_mapping_count.sh
+${DIR}/dashboard/set_elasticsearch_mapping_audit.sh
 echo
+
+sleep 3
+echo
+docker-compose up -d audit-log-consumer
+echo "..."
 
 echo -e "\nStart streaming to Elasticsearch sink connector:"
 ${DIR}/connectors/submit_elastic_sink_config.sh
